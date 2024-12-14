@@ -23,12 +23,19 @@ def get_commit_diff(base_sha, head_sha):
         print(f"Error getting commit diff: {e}")
         return ""
 
-def comment_on_pr_via_api(pr, comment):
+def comment_on_pr_via_api(repo, pr_number, github_token, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        pr.create_issue_comment(comment)
+        requests.post(
+            "https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments",
+            headers={
+                "Authorization": f"Bearer {github_token}",
+                "Accept": "application/vnd.github.v3+json"
+            },
+            json={"body": comment}
+        )
         print("Commented on PR successfully.")
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
@@ -58,7 +65,7 @@ if __name__ == "__main__":
             f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}",
             headers={
                 "Authorization": f"Bearer {github_token}",
-                "Accept": "application/vnd.github+json"
+                "Accept": "application/vnd.github.v3+json"
             }
         ).json()
         
@@ -90,4 +97,4 @@ Git diff (with files):
     comment_message = "This is an automated review comment. Details:\n\n" + prompt
 
     # Comment on the pull request using the API
-    comment_on_pr_via_api(pr, comment_message)
+    comment_on_pr_via_api(repo, pr_number, github_token, comment_message)
