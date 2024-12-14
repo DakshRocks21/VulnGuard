@@ -1,9 +1,11 @@
 import os
 import subprocess
-import requests
 from github import Github
 
 def get_commit_diff(base_sha, head_sha):
+    """
+    Get commit messages between two Git SHAs.
+    """
     try:
         result = subprocess.check_output(
             ["git", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
@@ -14,42 +16,59 @@ def get_commit_diff(base_sha, head_sha):
         print(f"Error getting commit diff: {e}")
         return ""
 
-def send_to_api(commit_diff, api_url):
-    payload = {"commits": commit_diff}
-    headers = {"Content-Type": "application/json"}
-    try:
-        response = requests.post(api_url, json=payload)
-        response.raise_for_status()
-        print(f"API response: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error sending to API: {e}")
-
 def comment_on_pr(pr_number, message, github_token, repo_name):
-    g = Github(github_token)
-    repo = g.get_repo(repo_name)
-    pr = repo.get_pull(pr_number)
-    pr.create_issue_comment(message)
+    """
+    Comment on a GitHub pull request.
+    """
+    try:
+        g = Github(github_token)
+        repo = g.get_repo(repo_name)
+        pr = repo.get_pull(pr_number)
+        pr.create_issue_comment(message)
+        print(f"Commented on PR #{pr_number}: {message}")
+    except Exception as e:
+        print(f"Error commenting on PR: {e}")
 
 if __name__ == "__main__":
+    # Set API URL (can be extended for use later)
     api_url = ""
-    debug = True
+
+    # Toggle debug mode for testing without GitHub Actions
+    debug = False
+
     if debug:
-        os.environ["BASE_SHA"] = "123456"
-        os.environ["HEAD_SHA"] = "abcdef"
-        os.environ["GITHUB_TOKEN"] = ""
-        os.environ["PR_NUMBER"] = "1"
-        os.environ["GITHUB_REPOSITORY"] = "DakshRocks21/skills-review-pull-requests"
-        
+        # Debug variables for testing locally
+        base_sha = "debug_base_sha"
+        head_sha = "debug_head_sha"
+        github_token = "debug_github_token"
+        pr_number = 1
+        repo_name = "DakshRocks21/skills-review-pull-requests"
     else:
-        base_sha = os.environ["BASE_SHA"]
-        head_sha = os.environ["HEAD_SHA"]
-        
-        github_token = os.environ["GITHUB_TOKEN"]
-        pr_number = int(os.environ["PR_NUMBER"])
-        repo_name = os.environ["GITHUB_REPOSITORY"]
+        # Get environment variables provided by GitHub Actions
+        base_sha = os.getenv("BASE_SHA", "")
+        head_sha = os.getenv("HEAD_SHA", "")
+        github_token = os.getenv("GITHUB_TOKEN", "")
+        pr_number = int(os.getenv("PR_NUMBER", 0))
+        repo_name = os.getenv("GITHUB_REPOSITORY", "")
 
+    # Validate required environment variables
+    if not all([base_sha, head_sha, github_token, pr_number, repo_name]):
+        print("Error: Missing required environment variables.")
+        exit(1)
+
+    # Display basic debug information
+    print(f"Base SHA: {base_sha[:6]}...")
+    print(f"Head SHA: {head_sha[:6]}...")
+    print(f"PR Number: {pr_number}")
+    print(f"Repo Name: {repo_name}")
+
+    # Get the commit difference
     commit_diff = get_commit_diff(base_sha, head_sha)
+    if commit_diff:
+        print(f"Commit Diff:\n{commit_diff}")
+    else:
+        print("No commit differences found.")
 
-    send_to_api(commit_diff, api_url)
-    
-    comment_on_pr(pr_number, "Done", github_token, repo_name)
+    # Add your comment logic here
+    comment_message = "Done"
+    comment_on_pr(pr_number, comment_message, github_token, repo_name)

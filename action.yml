@@ -1,0 +1,10 @@
+name : "VulnGuard"
+description : "VulnGuard is a GitHub Action that scans your code for vulnerabilities."
+runs:
+  using: "docker"
+  image: "Dockerfile"
+branding:
+  icon: "shield"
+  color: "red"
+
+  
