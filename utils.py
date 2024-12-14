@@ -51,11 +51,16 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     try:
         INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
+        print(1)
         token = get_installation_access_token(bot_key, INSTALLATION_ID)
+        print(2)
         
         g = Github(token)
+        print(3)
         repo = g.get_repo(repo)
+        print(4)
         pr = repo.get_pull(pr_number)
+        print(5)
         for char in comment:
             if not char.isprintable():
                 comment = comment.replace(char, "")
