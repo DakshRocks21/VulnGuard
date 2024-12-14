@@ -36,7 +36,7 @@ Git diff (with files):
     gpt = VulnGuardGPT(openai_key)
     response = gpt.get_response(prompt)
     
-    print(response)
+    #print(response)
     
     # Comment on the pull request
     try:

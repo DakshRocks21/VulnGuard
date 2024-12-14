@@ -79,9 +79,7 @@ OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS.
         self.chatgpt.add_user_input(user_input)
     
         while (attempt < max_tries):
-            response = self.chatgpt.get_response()
-            print(attempt, response)
-            
+            response = self.chatgpt.get_response() 
             try:
                 json.loads(response)
                 return response
