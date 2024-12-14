@@ -1,8 +1,6 @@
 import openai
 import os
 import dotenv
-import json
-import time
 
 dotenv.load_dotenv()
 
@@ -95,20 +93,21 @@ Keep explanations concise and actionable.""")
         self.chatgpt.messages = []
 
 
-gpt = VulnGuardGPT()
-responsee = gpt.get_response(""" Code Information:
-Description:
-The commit message states: "Fixes input validation to prevent SQL injection vulnerability in the login function."
-
-Code Snippet(with files):
-
-main.py
-def login_user(username, password):
-    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-    result = database.execute(query)
-    if result:
-        return "Login successful"
-    else:
-        return "Invalid credentials"
-                """)
-print(responsee)
+# gpt = VulnGuardGPT()
+# response = gpt.get_response(""" Code Information:
+# Description:
+# The commit message states: "Fixes input validation to prevent SQL injection vulnerability in the login function."
+# 
+# Code Snippet(with files):
+# 
+# main.py
+# def login_user(username, password):
+#     query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+#     result = database.execute(query)
+#     if result:
+#         return "Login successful"
+#     else:
+#         return "Invalid credentials"
+#                 """)
+# 
+# print(response)
