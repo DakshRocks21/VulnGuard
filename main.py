@@ -40,6 +40,8 @@ def comment_on_pr_via_api(repo, pr_number, github_token, comment):
             print("Commented on PR successfully.")
         else:
             print(response.status_code)
+            print(response.json())
+            print("Error commenting on PR.")
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
 
