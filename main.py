@@ -11,7 +11,7 @@ def get_commit_diff(base_sha, head_sha):
 
         # DEBUG
         result = subprocess.run(
-            ["git", "--no-pager", "log"],
+            ["git", "remote", "show", "origin"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
