@@ -2,6 +2,7 @@ import os
 import subprocess
 from gpt import VulnGuardGPT
 from github import Github
+import requests
 
 def get_commit_diff(base_sha, head_sha):
     """
@@ -51,15 +52,18 @@ if __name__ == "__main__":
     # Get the commit difference
     commit_diff = get_commit_diff(base_sha, head_sha)
 
-    try:
-        body = pr.get_issue_comments().get_page(0)[0]
-    except:
-        body = "No body provided."
+    r = requests.get(f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}", headers={
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }).json()
+
+    title = r["title"]
+    body = r["body"]
 
     gpt = VulnGuardGPT()
     prompt = f"""Code Information:
 PR Title:
-{pr.title}
+{title}
 
 PR Body:
 {body}
