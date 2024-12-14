@@ -2,3 +2,4 @@ PyGithub
 requests
 openai
 python-dotenv
+langchain==0.1.20
