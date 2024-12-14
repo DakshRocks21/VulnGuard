@@ -32,7 +32,8 @@ PR Body:
 Git diff (with files):
 {commit_diff}
 """
-
+    print(prompt)
+    
     gpt = VulnGuardGPT(openai_key)
     response = gpt.get_response(prompt)
     
