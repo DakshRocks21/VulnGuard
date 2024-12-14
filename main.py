@@ -15,8 +15,6 @@ def get_commit_diff(base_sha, head_sha):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        print(result.stderr)
-        print(result.stdout)
         return result.stdout.decode().strip()
     except subprocess.CalledProcessError as e:
         print(f"Error getting commit diff: {e}")
@@ -53,13 +51,18 @@ if __name__ == "__main__":
     # Get the commit difference
     commit_diff = get_commit_diff(base_sha, head_sha)
 
+    try:
+        body = pr.get_issue_comments().get_page()[0]
+    except:
+        body = "No body provided."
+
     gpt = VulnGuardGPT()
     prompt = f"""Code Information:
 PR Title:
 {pr.title}
 
 PR Body:
-{pr.body}
+{body}
 
 Git diff (with files):
 {commit_diff}
