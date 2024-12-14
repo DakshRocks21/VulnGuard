@@ -12,6 +12,7 @@ class GitHubBot:
     def __init__(self, app_id, private_key):
         self.app_id = app_id
         self.private_key = private_key or os.getenv("BOT_KEY")
+        print(self.private_key)
         self.private_key = self.private_key.replace("\\n", "\n")
         self.installation_id = self.get_installation_id()
         self.token = self.get_installation_access_token()
