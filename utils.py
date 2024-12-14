@@ -4,6 +4,7 @@ import requests
 from jwt import encode
 import time
 from github import Github
+import json
 
 APP_ID = 1087519
 
@@ -45,23 +46,26 @@ def get_pr_details(repo_name, pr_number, github_token):
         exit(1)
     return title, body
 
-def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
+def  comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
         INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
-        token = get_installation_access_token(bot_key, INSTALLATION_ID)
+        
+        jwt_token = generate_jwt(bot_key)
+        token = get_installation_access_token(jwt_token, INSTALLATION_ID)
+        
+        
+        comment = json.loads(comment)["summary"]
         
         g = Github(token)
         repo = g.get_repo(repo)
-        pr = repo.get_pull(pr_number)
-        for char in comment:
-            if not char.isprintable():
-                comment = comment.replace(char, "")
+        pr = repo.get_pull(pr_number)    
+        
         print(f"Commenting on PR #{pr_number} with: {comment}")
         
-        pr.create_issue_comment(comment.replace("\r", "").replace("\n", " ").trim().strip())
+        pr.create_issue_comment(comment)
         
         if (comment.isprintable()):
             print(f"Commented on PR #{pr_number}")
