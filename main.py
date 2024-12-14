@@ -7,7 +7,7 @@ def main():
     base_sha = os.getenv("BASE_SHA", "")
     head_sha = os.getenv("HEAD_SHA", "")
     github_token = os.getenv("GITHUB_TOKEN", "")
-    pr_number = int(os.getenv("PR_NUMBER", 0)) + 1
+    pr_number = int(os.getenv("PR_NUMBER", 0))
     repo_name = os.getenv("GITHUB_REPOSITORY", "")
     openai_key = os.getenv("OPENAI_API_KEY", "")
     bot_key = os.getenv("BOT_KEY", "").replace("\\n", "\n")

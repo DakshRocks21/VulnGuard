@@ -56,6 +56,8 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
         jwt_token = generate_jwt(bot_key)
         token = get_installation_access_token(jwt_token, INSTALLATION_ID)
         
+        print(f"Commenting on PR #{pr_number}...")
+        print(f"Comment: {comment}")
         
         summary = json.loads(comment)["summary"]
         report = json.loads(comment)["report"]
