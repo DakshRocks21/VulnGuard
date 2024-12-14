@@ -52,7 +52,7 @@ if __name__ == "__main__":
     commit_diff = get_commit_diff(base_sha, head_sha)
 
     try:
-        body = pr.get_issue_comments().get_page()[0]
+        body = pr.get_issue_comments().get_page(0)[0]
     except:
         body = "No body provided."
 
