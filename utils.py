@@ -3,10 +3,10 @@ import subprocess
 import requests
 from jwt import encode
 import time
-import dotenv
 from github import Github
 
-dotenv.load_dotenv()
+APP_ID = 1087519
+
 
 def get_commit_diff(base_sha, head_sha):
     """
@@ -28,12 +28,29 @@ def get_commit_diff(base_sha, head_sha):
         print(f"Error getting commit diff: {e}")
         return ""
 
-def comment_on_pr_via_api(repo, pr_number, github_token, comment):
+def get_pr_details(repo_name, pr_number, github_token):
+    try:
+        pr_data = requests.get(
+            f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}",
+            headers={
+                "Authorization": f"Bearer {github_token}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+        ).json()
+        
+        title = pr_data.get("title", "")
+        body = pr_data.get("body", "")
+    except Exception as e:
+        print(f"Error fetching PR details: {e}")
+        exit(1)
+    return title, body
+
+def comment_on_pr_via_api(bot_key, repo, pr_number, github_token, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        token = get_installation_access_token()
+        token = get_installation_access_token(bot_key)
         g = Github(token)
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)
@@ -42,10 +59,8 @@ def comment_on_pr_via_api(repo, pr_number, github_token, comment):
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
 
-APP_ID = 1087519
-PRIVATE_KEY = os.getenv("BOT_KEY").replace("\\n", "\n")
 
-def generate_jwt():
+def generate_jwt(bot_key):
     """
     Generate a JWT for the GitHub App authentication.
     """
@@ -55,7 +70,7 @@ def generate_jwt():
         "exp": now + (10 * 60),  # JWT valid for 10 minutes
         "iss": APP_ID,
     }
-    return encode(payload, PRIVATE_KEY, algorithm="RS256")
+    return encode(payload, bot_key, algorithm="RS256")
 
 def get_installation_id():
     """
@@ -73,11 +88,11 @@ def get_installation_id():
     
 INSTALLATION_ID = get_installation_id()
 
-def get_installation_access_token():
+def get_installation_access_token(bot_key):
     """
     Exchange the JWT for an installation access token.
     """
-    jwt_token = generate_jwt()
+    jwt_token = generate_jwt(bot_key)
     url = f"https://api.github.com/app/installations/{INSTALLATION_ID}/access_tokens"
     headers = {
         "Authorization": f"Bearer {jwt_token}",

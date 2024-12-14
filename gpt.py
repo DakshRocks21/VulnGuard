@@ -1,10 +1,8 @@
 import openai
 import os
-import dotenv
-import re
 import subprocess
+import json
 
-dotenv.load_dotenv()
 
 class ChatGPT:
     def __init__(self, api_key, model="gpt-4"):
@@ -50,8 +48,8 @@ class ChatGPT:
             return f"Error: {str(e)}"
 
 class VulnGuardGPT:
-    def __init__(self, chatgpt=ChatGPT(api_key=os.getenv("OPENAI_API_KEY"))):
-        self.chatgpt = chatgpt
+    def __init__(self, openai_key):
+        self.chatgpt = ChatGPT(openai_key)
         self.chatgpt.set_system_prompt("""You are a VULNERABILITY and MALWARE DETECTION expert. Analyze the code snippet and its associated GitHub commit description to ensure it: OUTPUT SHOULD BE IN JSON FORMAT WITH NO BACKTICKS. 
 Performs as described: Verify the code matches the commit message.
 Detects issues: Identify vulnerabilities, unintended behavior, or malicious actions, highlighting severity and providing recommendations.
@@ -75,12 +73,22 @@ IMPORTANT - DO NOT DEVIATE (Output format):
 OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS.
 """)
         
-    def get_response(self, user_input):
+    def get_response(self, user_input, max_tries=3):
+        attempt = 0
         
         self.chatgpt.add_user_input(user_input)
-        response = self.chatgpt.get_response()
+    
+        while (attempt < max_tries):
+            response = self.chatgpt.get_response()
+            
+            try:
+                json.loads(response)
+                return response
+            except json.JSONDecodeError:
+                attempt += 1
+                self.chatgpt.add_user_input("Not valid JSON. Please try again. NO BACKTICKS. ONLY JSON FORMAT.")
         
-        return response
+        return "Auto-Analysis failed. Please try again."
     
     def get_code_response(self, rag_inputs, max_tries=3, is_code_output=False):
         attempt = 0

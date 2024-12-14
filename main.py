@@ -1,7 +1,6 @@
 import os
-import requests
-from github import Github
-from utils import get_commit_diff, comment_on_pr_via_api
+from utils import get_commit_diff, comment_on_pr_via_api, get_pr_details
+from gpt import VulnGuardGPT
 
 def main():
     # Retrieve environment variables
@@ -11,35 +10,17 @@ def main():
     pr_number = int(os.getenv("PR_NUMBER", 0)) + 1
     repo_name = os.getenv("GITHUB_REPOSITORY", "")
     openai_key = os.getenv("OPENAI_API_KEY", "")
+    bot_key = os.getenv("BOT_KEY", "").replace("\\n", "\n")
 
     # Validate required environment variables
-    if github_token == "" or openai_key == "":
+    if github_token == "" or openai_key == "" or bot_key == "":
         print("Error: Missing required environment variables.")
-        exit(1)
-
-    # Initialize GitHub repository object
-    g = Github(github_token)
-    repo = g.get_repo(repo_name)
-
-    # Fetch pull request details
-    try:
-        pr_data = requests.get(
-            f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}",
-            headers={
-                "Authorization": f"Bearer {github_token}",
-                "Accept": "application/vnd.github.v3+json"
-            }
-        ).json()
-        
-        title = pr_data.get("title", "")
-        body = pr_data.get("body", "")
-    except Exception as e:
-        print(f"Error fetching PR details: {e}")
-        exit(1)
+        exit(1)    
 
     # Get the git diff
     commit_diff = get_commit_diff(base_sha, head_sha)
-
+    
+    title, body = get_pr_details(repo_name, pr_number)
     # Construct GPT prompt
     prompt = f"""Code Information:
 PR Title:
@@ -51,14 +32,15 @@ PR Body:
 Git diff (with files):
 {commit_diff}
 """
-    print("Generated GPT prompt:")
-    print(prompt)
 
-    # Placeholder comment message
-    comment_message = "This is an automated review comment. Details:\n\n" + prompt
-
+    gpt = VulnGuardGPT(openai_key)
+    response = gpt.get_response(prompt)
+    
     # Comment on the pull request
-    comment_on_pr_via_api(repo_name, pr_number, github_token, comment_message)
+    try:
+        comment_on_pr_via_api(bot_key, repo_name, pr_number, github_token, response["summary"])
+    except Exception as e:
+        comment_on_pr_via_api(bot_key, repo_name, pr_number, github_token, response)
 
 if __name__ == "__main__":
     main()
