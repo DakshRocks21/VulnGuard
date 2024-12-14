@@ -62,7 +62,7 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
             print(f"Commented on PR #{pr_number}")
         
         print(f"Commented on PR #{pr_number}")
-    except requests.RequestException as e.=:
+    except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
 
 
