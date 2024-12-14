@@ -1,2 +1,4 @@
 PyGithub
 requests
+openai
+python-dotenv
