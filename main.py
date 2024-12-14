@@ -50,6 +50,31 @@ if __name__ == "__main__":
         github_token = os.getenv("GITHUB_TOKEN", "")
         pr_number = int(os.getenv("PR_NUMBER", 0))
         repo_name = os.getenv("GITHUB_REPOSITORY", "")
+    
+    try: 
+        print(f"Base SHA: {base_sha[:6]}...")
+    except:
+        print("Base SHA not found")
+    
+    try:
+        print(f"Head SHA: {head_sha[:6]}...")
+    except:
+        print("Head SHA not found")
+        
+    try:
+        print(f"PR Number: {pr_number}")
+    except:
+        print("PR Number not found")
+        
+    try:
+        print(f"Repo Name: {repo_name}")
+    except:
+        print("Repo Name not found")
+
+    try:
+        print(f"Github Token: {github_token}")
+    except:
+        print("Github Token not found")
 
     # Validate required environment variables
     if not all([base_sha, head_sha, github_token, pr_number, repo_name]):
