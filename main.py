@@ -31,7 +31,7 @@ def comment_on_pr_via_api(repo, pr_number, github_token, comment):
         response = requests.post(
             f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
             headers={
-                "Authorization": f"Bearer 34f5123333341d589499a5384da7dd022a39adfe",
+                "Authorization": f"Bearer {os.getenv('GITHUB_USER_TOKEN', '')}",
                 "Accept": "application/vnd.github.v3+json"
             },
             json={"body": comment}
