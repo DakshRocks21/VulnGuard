@@ -80,6 +80,7 @@ OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS.
     
         while (attempt < max_tries):
             response = self.chatgpt.get_response()
+            print(attempt, response)
             
             try:
                 json.loads(response)
