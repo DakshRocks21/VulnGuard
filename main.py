@@ -7,10 +7,9 @@ def get_commit_diff(base_sha, head_sha):
     Get commit messages between two Git SHAs.
     """
     try:
-        result = subprocess.check_output(
+        result = subprocess.run(
             ["git", "--no-pager", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
-            shell=True,
-            text=True,
+            stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
         return result.strip()
