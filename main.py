@@ -100,4 +100,4 @@ Git diff (with files):
     comment_message = "This is an automated review comment. Details:\n\n" + prompt
 
     # Comment on the pull request using the API
-    comment_on_pr_via_api(repo, pr_number, github_token, comment_message)
+    comment_on_pr_via_api(repo_name, pr_number, github_token, comment_message)
