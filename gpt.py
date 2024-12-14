@@ -1,6 +1,8 @@
 import openai
 import os
 import dotenv
+import re
+import subprocess
 
 dotenv.load_dotenv()
 
@@ -42,6 +44,7 @@ class ChatGPT:
 
             rawResponse = response.choices[0].message.content
             # Add the assistant's response to the conversation
+            self.messages.append({"role": "assistant", "content": rawResponse})
             return rawResponse
         except Exception as e:
             return f"Error: {str(e)}"
@@ -63,10 +66,40 @@ Use <code> tags for multiline code.
 Keep explanations concise and actionable.""")
         
     def get_response(self, user_input):
+        
         self.chatgpt.add_user_input(user_input)
         response = self.chatgpt.get_response()
         
         return response
+    
+    def get_code_response(self, rag_inputs, max_tries=3, is_code_output=False):
+        attempt = 0
+        
+        prompt = f"""Task Information:
+        Write test cases based on the code. From now on, return your results only in python. Without backticks.
+        ALL CODE MUST BE WRITTEN IN PYTHON, include installion of any required libraries.
+        
+        The Code above uses these code snippets :
+        {rag_inputs}
+        """
+        while (attempt < max_tries):
+            response = self.get_response(prompt)
+            
+            result = subprocess.run(
+                ["python3", "-c", response],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            
+            if not result.stderr:
+                return (response,result.stdout.decode())        
+            
+            prompt = f"""An error occurred while running the code. Please try again.
+            {result.stderr.decode()}
+            
+            Output only in python. Without backticks.
+            """   
+                
     
     def add_example(self, user_prompt, assistant_response):
         """
