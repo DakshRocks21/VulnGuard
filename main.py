@@ -12,7 +12,9 @@ def get_commit_diff(base_sha, head_sha):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        return result.strip()
+        print(result.stderr)
+        print(result.stdout)
+        return result.stdout.decode().strip()
     except subprocess.CalledProcessError as e:
         print(f"Error getting commit diff: {e}")
         return ""
