@@ -108,10 +108,10 @@ def get_installation_id(bot_key, repo_name):
         account_login = installation["account"]["login"]
 
         # Get repositories for this installation
-        #token = get_installation_access_token(jwt_token, installation_id)
+        token = get_installation_access_token(jwt_token, installation_id)
         repo_url = "https://api.github.com/installation/repositories"
         repo_headers = {
-            "Authorization": f"Bearer {jwt_token}", # TOOD: replace jwt_token with token
+            "Authorization": f"Bearer {token}", 
             "Accept": "application/vnd.github+json",
         }
         repo_response = requests.get(repo_url, headers=repo_headers)
