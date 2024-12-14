@@ -84,7 +84,7 @@ def get_installation_id(bot_key):
         "Accept": "application/vnd.github+json",
     }
     response = requests.get(url, headers=headers).json()
-    print("Installation ID:", response[0]["id"])
+    print("Installation ID:", response[1]["id"])
     return response[0]["id"]
 
 def get_installation_access_token(bot_key, installation_id):
