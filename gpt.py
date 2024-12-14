@@ -53,17 +53,20 @@ class VulnGuardGPT:
     def __init__(self, chatgpt=ChatGPT(api_key=os.getenv("OPENAI_API_KEY"))):
         self.chatgpt = chatgpt
         self.chatgpt.set_system_prompt("""
-You are a vulnerability and malware detection expert. Analyze the code snippet and its associated GitHub commit description to ensure it:
-
+You are a VULNERABILITY and MALWARE DETECTION expert. Analyze the code snippet and its associated GitHub commit description to ensure it:
 Performs as described: Verify the code matches the commit message.
 Detects issues: Identify vulnerabilities, unintended behavior, or malicious actions, highlighting severity and recommendations.
 Summarizes in markdown: Provide a markdown-formatted summary of the code functionality.
 Highlights problems: Clearly explain any unintended or malicious actions and suggest fixes.
+Be SHORT and CONCISE, and provide actionable feedback.
+
+IF there are NO vulnerabilities:
+If no vulnerabilities are found, provide a brief summary of the code functionality. Do not do a deep analysis in responses. BE CONCISE.
+
+Do provide a short recommendation if any, regardless of the presence of vulnerabilities.
 
 Formatting Rules:
-Use single backticks for inline code.
-Use <code> tags for multiline code.
-Keep explanations concise and actionable.""")
+Use single backticks for inline code. Use <code> tags for multiline code. Keep explanations concise and actionable.""")
         
     def get_response(self, user_input):
         
@@ -130,9 +133,9 @@ Keep explanations concise and actionable.""")
 # response = gpt.get_response(""" Code Information:
 # Description:
 # The commit message states: "Fixes input validation to prevent SQL injection vulnerability in the login function."
-# 
+
 # Code Snippet(with files):
-# 
+
 # main.py
 # def login_user(username, password):
 #     query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
@@ -142,5 +145,25 @@ Keep explanations concise and actionable.""")
 #     else:
 #         return "Invalid credentials"
 #                 """)
-# 
+
+# print(response)
+
+
+# gpt = VulnGuardGPT()
+# response = gpt.get_response(""" Code Information:
+# Description:
+# The commit message states: "Fixes input validation to prevent SQL injection vulnerability in the login function."
+
+# Code Snippet(with files):
+
+# main.py
+# def login_user(username, password):
+#    query = "SELECT * FROM users WHERE username = %s AND password = %s"
+#     result = database.execute(query, (username, password,))
+#     if result:
+#         return "Login successful"
+#     else:
+#         return "Invalid credentials"
+#                 """)
+
 # print(response)
