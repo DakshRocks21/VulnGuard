@@ -18,6 +18,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir -r /app/requirements.txt
 
 RUN apt update -y && apt install -y git
+RUN git config --global user.email "you@example.com" && git config --global user.name "Your Name"
 
 # Copy the source code into the container
 COPY . /app
