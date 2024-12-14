@@ -8,7 +8,6 @@ def get_commit_diff(base_sha, head_sha):
     """
     try:
         os.system("git config --global --add safe.directory /github/workspace")
-        os.system("chown -R $(whoami) .")
 
         # DEBUG
         result = subprocess.run(
@@ -20,7 +19,7 @@ def get_commit_diff(base_sha, head_sha):
         print(result.stdout)
 
         result = subprocess.run(
-            ["git", "--no-pager", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
+            ["git", "--no-pager", "diff", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
