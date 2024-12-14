@@ -4,6 +4,7 @@ import requests
 from jwt import encode
 import time
 from github import Github
+import json
 
 APP_ID = 1087519
 
@@ -51,18 +52,17 @@ def  comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     try:
         INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
-        print(1)
-        print(INSTALLATION_ID)
+        
         jwt_token = generate_jwt(bot_key)
         token = get_installation_access_token(jwt_token, INSTALLATION_ID)
-        print(2)
+        
+        
+        comment = json.loads(comment)["summary"]
         
         g = Github(token)
-        print(3)
         repo = g.get_repo(repo)
-        print(4)
-        pr = repo.get_pull(pr_number)
-        print(5)
+        pr = repo.get_pull(pr_number)    
+        
         print(f"Commenting on PR #{pr_number} with: {comment}")
         
         pr.create_issue_comment(comment)

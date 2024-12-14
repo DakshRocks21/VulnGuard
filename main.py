@@ -39,10 +39,7 @@ Git diff (with files):
     #print(response)
     
     # Comment on the pull request
-    try:
-        comment_on_pr_via_api(bot_key, repo_name, pr_number, response["summary"])
-    except Exception as e:
-        comment_on_pr_via_api(bot_key, repo_name, pr_number, response)
+    comment_on_pr_via_api(bot_key, repo_name, pr_number, response)
 
 if __name__ == "__main__":
     main()
