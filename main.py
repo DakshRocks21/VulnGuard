@@ -28,15 +28,18 @@ def comment_on_pr_via_api(repo, pr_number, github_token, comment):
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        requests.post(
-            "https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments",
+        response = requests.post(
+            f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
             headers={
                 "Authorization": f"Bearer {github_token}",
                 "Accept": "application/vnd.github.v3+json"
             },
             json={"body": comment}
         )
-        print("Commented on PR successfully.")
+        if response.status_code == 200:
+            print("Commented on PR successfully.")
+        else:
+            print(response.status_code)
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
 
