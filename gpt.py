@@ -77,7 +77,7 @@ IMPORTANT - DO NOT DEVIATE (Output format):
 
 OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS AROUND IT. YOU ARE ONLY ALLOWED TO USE BACKTICKS FOR CODE INSIDE THE JSON. 
 """)
-        self.add_example("""Code Information:
+        self.add_example(r"""Code Information:
 PR Title:
 Add Login Functionality to Flask App with SQL Integration
 
@@ -90,16 +90,6 @@ Minor adjustments to existing code for seamless integration.
 This change improves app functionality, making it suitable for applications requiring user-specific experiences or data.
 
 Git diff (with files):
-diff --git a/.github/workflows/vulnhub.yml b/.github/workflows/vulnhub.yml
-index c59a203..e6ccbb6 100644
---- a/.github/workflows/vulnhub.yml
-+++ b/.github/workflows/vulnhub.yml
-@@ -23,3 +23,4 @@ jobs:
-           BOT_KEY: ${{ secrets.BOT_KEY }}
-           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-+          PR_NUMBER: ${{ github.event.pull_request.number }}
-\ No newline at end of file
 diff --git a/README.md b/README.md
 index 122da77..2bc41f2 100644
 --- a/README.md
