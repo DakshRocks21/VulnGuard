@@ -56,6 +56,11 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
         g = Github(token)
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)
+        for char in comment:
+            if not char.isprintable():
+                comment = comment.replace(char, "")
+        print(f"Commenting on PR #{pr_number} with: {comment}")
+        
         pr.create_issue_comment(comment.replace("\r", "").replace("\n", " ").trim().strip())
         
         if (comment.isprintable()):
