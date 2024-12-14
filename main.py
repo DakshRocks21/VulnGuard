@@ -37,7 +37,7 @@ if __name__ == "__main__":
     base_sha = os.getenv("BASE_SHA", "")
     head_sha = os.getenv("HEAD_SHA", "")
     github_token = os.getenv("GITHUB_TOKEN", "")
-    pr_number = int(os.getenv("PR_NUMBER", 0))
+    pr_number = int(os.getenv("PR_NUMBER", 0)) + 1
     repo_name = os.getenv("GITHUB_REPOSITORY", "")
     openai_key = os.getenv("OPENAI_API_KEY", "")
 
