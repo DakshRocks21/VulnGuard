@@ -77,7 +77,7 @@ if __name__ == "__main__":
         print("Github Token not found")
 
     # Validate required environment variables
-    if not all([base_sha, head_sha, github_token, pr_number, repo_name]):
+    if github_token == "":
         print("Error: Missing required environment variables.")
         exit(1)
 
