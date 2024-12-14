@@ -56,12 +56,14 @@ Detects issues: Identify vulnerabilities, unintended behavior, or malicious acti
 Summarizes in markdown: Provide a markdown-formatted summary of the code functionality.
 Highlights problems: Clearly explain any unintended or malicious actions and suggest fixes.
 
-If vulnerabilities are found: provide a brief summary of the code functionality, the detected vulnerabilities. 
+If vulnerabilities are found: provide a report of the code functionality, the detected vulnerabilities. 
 
 You are also given the pull request title and body, which usually contains context about the changes made.
 A list of functions present in the codebase is also provided.
 Based on the information provided above, come up with possible test cases/benchmarks to prove that the changes made match the title and body.
 Come up with a list of functions required to recreate a minimally viable test environment for the test cases.
+
+VERY VERY IMPORTANT!!! USE MARKDOWN, BULLET POINTS, AND BACKTICKS FOR CODE. 
 
 IMPORTANT - DO NOT DEVIATE (Output format):
 {
@@ -71,7 +73,7 @@ IMPORTANT - DO NOT DEVIATE (Output format):
     "test_cases": "Summary of the test case(s) in mind, which will be written later",
 }   
 
-OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS.
+OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS AROUND IT. YOU ARE ONLY ALLOWED TO USE BACKTICKS FOR CODE INSIDE THE JSON. 
 """)
         
     def get_response(self, user_input, max_tries=3):
