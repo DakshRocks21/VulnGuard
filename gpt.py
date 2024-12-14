@@ -5,7 +5,7 @@ import json
 
 
 class ChatGPT:
-    def __init__(self, api_key, model="gpt-4"):
+    def __init__(self, api_key, model="gpt-4o"):
         """
         Initialize the ChatGPT instance with an API key and model.
         """
