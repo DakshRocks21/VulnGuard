@@ -58,7 +58,7 @@ if __name__ == "__main__":
             f"https://api.github.com/repos/{repo_name}/pulls/{pr_number}",
             headers={
                 "Authorization": f"Bearer {github_token}",
-                "Accept": "application/vnd.github.v3+json"
+                "Accept": "application/vnd.github+json"
             }
         ).json()
         
