@@ -3,3 +3,5 @@ requests
 openai
 python-dotenv
 langchain==0.1.20
+tree-sitter
+tree-sitter-python

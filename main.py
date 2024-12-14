@@ -1,7 +1,7 @@
 import os
 import subprocess
 import requests
-from github import Github
+from github import Github, PullRequest
 
 def get_commit_diff(base_sha, head_sha):
     """
@@ -23,15 +23,30 @@ def get_commit_diff(base_sha, head_sha):
         print(f"Error getting commit diff: {e}")
         return ""
 
-def comment_on_pr_via_api(pr, comment):
+def comment_on_pr_via_api(repo, pr_number, github_token, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        pr.create_issue_comment(comment)
-        print("Commented on PR successfully.")
+        response = requests.post(
+            f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+            headers={
+                "Authorization": f"Bearer {os.getenv('GITHUB_USER_TOKEN', '')}",
+                "Accept": "application/vnd.github.v3+json"
+            },
+            json={"body": comment}
+        )
+        if response.status_code == 200:
+            print("Commented on PR successfully.")
+        else:
+            print(response.status_code)
+            print(response.json())
+            print("Error commenting on PR.")
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
+
+def comment_on_pr(pr: PullRequest.PullRequest, comment):
+    pr.create_review_comment(comment)
 
 if __name__ == "__main__":
     # Retrieve environment variables
@@ -90,4 +105,5 @@ Git diff (with files):
     comment_message = "This is an automated review comment. Details:\n\n" + prompt
 
     # Comment on the pull request using the API
-    comment_on_pr_via_api(pr, comment_message)
+    # comment_on_pr_via_api(repo_name, pr_number, github_token, comment_message)
+    comment_on_pr(pr, comment_message)

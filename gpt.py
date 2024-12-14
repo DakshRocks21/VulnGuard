@@ -52,21 +52,28 @@ class ChatGPT:
 class VulnGuardGPT:
     def __init__(self, chatgpt=ChatGPT(api_key=os.getenv("OPENAI_API_KEY"))):
         self.chatgpt = chatgpt
-        self.chatgpt.set_system_prompt("""
-You are a VULNERABILITY and MALWARE DETECTION expert. Analyze the code snippet and its associated GitHub commit description to ensure it:
+        self.chatgpt.set_system_prompt("""You are a VULNERABILITY and MALWARE DETECTION expert. Analyze the code snippet and its associated GitHub commit description to ensure it: OUTPUT SHOULD BE IN JSON FORMAT WITH NO BACKTICKS. 
 Performs as described: Verify the code matches the commit message.
-Detects issues: Identify vulnerabilities, unintended behavior, or malicious actions, highlighting severity and recommendations.
+Detects issues: Identify vulnerabilities, unintended behavior, or malicious actions, highlighting severity and providing recommendations.
 Summarizes in markdown: Provide a markdown-formatted summary of the code functionality.
 Highlights problems: Clearly explain any unintended or malicious actions and suggest fixes.
-Be SHORT and CONCISE, and provide actionable feedback.
 
-IF there are NO vulnerabilities:
-If no vulnerabilities are found, provide a brief summary of the code functionality. Do not do a deep analysis in responses. BE CONCISE.
+If vulnerabilities are found: provide a brief summary of the code functionality, the detected vulnerabilities. 
 
-Do provide a short recommendation if any, regardless of the presence of vulnerabilities.
+You are also given the pull request title and body, which usually contains context about the changes made.
+A list of functions present in the codebase is also provided.
+Based on the information provided above, come up with possible test cases/benchmarks to prove that the changes made match the title and body.
+Come up with a list of functions required to recreate a minimally viable test environment for the test cases.
 
-Formatting Rules:
-Use single backticks for inline code. Use <code> tags for multiline code. Keep explanations concise and actionable.""")
+IMPORTANT - DO NOT DEVIATE (Output format):
+{
+	"summary": "Markdown-formatted summary as documented above",
+	"functions": "List of functions as documented above",
+    "test_cases": "Summary of the test case(s) in mind, which will be written later",
+}   
+
+OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS.
+""")
         
     def get_response(self, user_input):
         
@@ -130,22 +137,46 @@ Use single backticks for inline code. Use <code> tags for multiline code. Keep e
 
 
 # gpt = VulnGuardGPT()
-# response = gpt.get_response(""" Code Information:
+# response = gpt.get_response("""Code Information:
+# Title:
+# "Fixed SQL injection vulnerability in login function"
 # Description:
-# The commit message states: "Fixes input validation to prevent SQL injection vulnerability in the login function."
+# "Fixes input validation to prevent SQL injection vulnerability in the login function."
 
-# Code Snippet(with files):
+# Function List:
+# - Security.sanitize_input
+# - UserService.login_user
+# - UserService.change_password
+# - Database.users
+# - Database.execute
 
-# main.py
-# def login_user(username, password):
-#     query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-#     result = database.execute(query)
-#     if result:
-#         return "Login successful"
-#     else:
-#         return "Invalid credentials"
-#                 """)
+# Code Snippet of the changes in the pull request(with files): (do note that the code snippet is not complete)
 
+# class Security:
+#     return input_string.replace("'", "''")
+
+# class UserService:
+#     def login_user(self, username, password):
+#         query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+#         if result:
+#             return "Login successful"
+#         else:
+#             return "Invalid credentials"
+
+#     def change_password(self, username, old_password, new_password):
+#         if username not in self.db.users or self.db.users[username] != old_password:
+#             return "Invalid credentials""")
+
+# """
+# {
+#     “summary”: "# Analysis Results.\nThe code does not perform as described. The commit message suggests that a fix for a SQL injection vulnerability has been implemented, but the code does not show this fix. The `login_user` method in the `UserService` class still uses string formatting to include user inputs directly into the SQL query, which can lead to SQL injection attacks.\nThe only method that seems to sanitize the input is `sanitize_input` in the `Security` class. However, this method is not used anywhere in the `UserService` class or in the `Database` class which simulates database interactions.\n\n## Summary:
+# The code initializes a simulated database and allows for user registration, login, and password change operations. However, it lacks sufficient input validation and escape dashing, creating a security vulnerability.\n## Highlighted Problems:
+# 1. **SQL injection vulnerability** in the `login_user` function due to use of string formatting rather than parameterized queries.\n2. The `sanitize_input` method of the `Security` class is **unused**, leaving user inputs unsanitized which could lead to potential SQL injections.\n\n## Recommendations:\n1. Implement the `sanitize_input` method across all methods in the `UserService` class that interact with the database.\n2. Use **parameterized queries** instead of string formatting to compose SQL queries.",
+
+#     “query”: "[redacted]"}"""
+#     #)
+
+# #print(gpt.get_messages())
 # print(response)
 
 
