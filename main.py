@@ -8,7 +8,7 @@ def get_commit_diff(base_sha, head_sha):
     """
     try:
         result = subprocess.check_output(
-            ["git", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
+            ["git", "--no-pager", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
             text=True,
         )
         return result.strip()
