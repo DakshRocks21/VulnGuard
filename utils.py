@@ -50,6 +50,7 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, github_token, comment):
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
+        INSTALLATION_ID = get_installation_id(bot_key)
         token = get_installation_access_token(bot_key)
         g = Github(token)
         repo = g.get_repo(repo)
@@ -72,11 +73,11 @@ def generate_jwt(bot_key):
     }
     return encode(payload, bot_key, algorithm="RS256")
 
-def get_installation_id():
+def get_installation_id(bot_key):
     """
     Get the installation ID for the GitHub App.
     """
-    jwt_token = generate_jwt()
+    jwt_token = generate_jwt(bot_key)
     url = f"https://api.github.com/app/installations"
     headers = {
         "Authorization": f"Bearer {jwt_token}",
@@ -85,8 +86,6 @@ def get_installation_id():
     response = requests.get(url, headers=headers).json()
     print("Installation ID:", response[0]["id"])
     return response[0]["id"]
-    
-INSTALLATION_ID = get_installation_id()
 
 def get_installation_access_token(bot_key):
     """
