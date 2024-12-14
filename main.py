@@ -10,13 +10,13 @@ def get_commit_diff(base_sha, head_sha):
         os.system("git config --global --add safe.directory /github/workspace")
 
         # DEBUG
-        result = subprocess.run(
-            [],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        print(result.stderr)
-        print(result.stdout)
+        # result = subprocess.run(
+        #     [],
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE,
+        # )
+        # print(result.stderr)
+        # print(result.stdout)
 
         result = subprocess.run(
             ["git", "--no-pager", "diff", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
