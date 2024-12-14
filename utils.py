@@ -50,12 +50,14 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        INSTALLATION_ID = get_installation_id(bot_key)
+        INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
         token = get_installation_access_token(bot_key, INSTALLATION_ID)
+        
         g = Github(token)
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)
         pr.create_issue_comment(comment)
+        
         print(f"Commented on PR #{pr_number}")
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
@@ -73,25 +75,10 @@ def generate_jwt(bot_key):
     }
     return encode(payload, bot_key, algorithm="RS256")
 
-def get_installation_id(bot_key):
-    """
-    Get the installation ID for the GitHub App.
-    """
-    jwt_token = generate_jwt(bot_key)
-    url = f"https://api.github.com/app/installations"
-    headers = {
-        "Authorization": f"Bearer {jwt_token}",
-        "Accept": "application/vnd.github+json",
-    }
-    response = requests.get(url, headers=headers).json()
-    print("Installation ID:", response[1]["id"])
-    return response[0]["id"]
-
-def get_installation_access_token(bot_key, installation_id):
+def get_installation_access_token(jwt_token, installation_id):
     """
     Exchange the JWT for an installation access token.
     """
-    jwt_token = generate_jwt(bot_key)
     url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
     headers = {
         "Authorization": f"Bearer {jwt_token}",
@@ -100,3 +87,44 @@ def get_installation_access_token(bot_key, installation_id):
     response = requests.post(url, headers=headers)
     response.raise_for_status()
     return response.json()["token"]
+
+
+def get_installation_id(bot_key, repo_name):
+    """
+    Find the installation ID and user for the given repository name.
+    """
+    # Fetch all installations of the app
+    jwt_token = generate_jwt(bot_key)
+    url = f"https://api.github.com/app/installations"
+    headers = {
+        "Authorization": f"Bearer {jwt_token}",
+        "Accept": "application/vnd.github+json",
+    }
+    installations = requests.get(url, headers=headers).json()
+
+    # Loop through installations and check repositories
+    for installation in installations:
+        installation_id = installation["id"]
+        account_login = installation["account"]["login"]
+
+        # Get repositories for this installation
+        #token = get_installation_access_token(jwt_token, installation_id)
+        repo_url = "https://api.github.com/installation/repositories"
+        repo_headers = {
+            "Authorization": f"Bearer {jwt_token}", # TOOD: replace jwt_token with token
+            "Accept": "application/vnd.github+json",
+        }
+        repo_response = requests.get(repo_url, headers=repo_headers)
+        repo_response.raise_for_status()
+        repositories = repo_response.json()["repositories"]
+
+        # Check if the repository matches
+        for repo in repositories:
+            if repo["full_name"] == repo_name:
+                return {
+                    "installation_id": installation_id,
+                    "added_by": account_login,
+                    "repo_name": repo_name,
+                }
+
+    raise ValueError(f"Repository '{repo_name}' not found in any installation.")
