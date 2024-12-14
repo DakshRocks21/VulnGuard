@@ -44,5 +44,9 @@ USER appuser
 # Copy the source code into the container.
 COPY . .
 
+RUN ls -la /
+RUN ls -la
+RUN pwd
+
 # Run the application.
 CMD python main.py
