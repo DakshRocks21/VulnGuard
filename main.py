@@ -1,7 +1,7 @@
 import os
 import subprocess
 import requests
-from github import Github
+from github import Github, PullRequest
 
 def get_commit_diff(base_sha, head_sha):
     """
@@ -44,6 +44,9 @@ def comment_on_pr_via_api(repo, pr_number, github_token, comment):
             print("Error commenting on PR.")
     except requests.RequestException as e:
         print(f"Error commenting on PR: {e}")
+
+def comment_on_pr(pr: PullRequest.PullRequest, comment):
+    pr.create_review_comment(comment)
 
 if __name__ == "__main__":
     # Retrieve environment variables
@@ -102,4 +105,5 @@ Git diff (with files):
     comment_message = "This is an automated review comment. Details:\n\n" + prompt
 
     # Comment on the pull request using the API
-    comment_on_pr_via_api(repo_name, pr_number, github_token, comment_message)
+    # comment_on_pr_via_api(repo_name, pr_number, github_token, comment_message)
+    comment_on_pr(pr, comment_message)
