@@ -31,4 +31,4 @@ RUN echo "Contents of /app:" && ls -la /app
 RUN echo "Current working directory:" && pwd
 
 # Run the application
-CMD ["python", "/app/real_main.py"]
+CMD ["python", "/app/main.py"]

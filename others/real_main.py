@@ -1,6 +1,6 @@
 import os
 import dotenv
-from GitHubBot import GitHubBot
+from others.GitHubBot import GitHubBot
 
 dotenv.load_dotenv()
 
