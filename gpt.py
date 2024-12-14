@@ -317,6 +317,7 @@ index 7c922b0..d506a17 100644
                 attempt += 1
                 self.chatgpt.add_user_input("Not valid JSON. Please try again. NO BACKTICKS. ONLY JSON FORMAT.")
         
+        print(response)
         return "Auto-Analysis failed. Please try again."
     
     def get_code_response(self, rag_inputs, max_tries=3, is_code_output=False):
