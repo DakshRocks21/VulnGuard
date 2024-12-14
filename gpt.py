@@ -65,8 +65,8 @@ Come up with a list of functions required to recreate a minimally viable test en
 
 IMPORTANT - DO NOT DEVIATE (Output format):
 {
-	"summary": "Markdown-formatted summary as documented above",
-    "report": "Detailed analysis of the code snippet, vulnerabilities, and recommendations. IN MARKDOWN FORMAT.",
+	"summary": "Markdown-formatted summary as documented above  IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
+    "report": "Detailed analysis of the code snippet, vulnerabilities, and recommendations. IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
 	"functions": "List of functions as documented above",
     "test_cases": "Summary of the test case(s) in mind, which will be written later",
 }   

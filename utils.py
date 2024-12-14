@@ -66,8 +66,8 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)    
         
-        pr.create_issue_comment("#Summary: \n" + summary)
-        pr.create_issue_comment("#Report: \n" + report)
+        pr.create_issue_comment("# Summary \n" + summary)
+        pr.create_issue_comment("# Report \n" + report)
         
         if (comment.isprintable()):
             print(f"Commented on PR #{pr_number}")
