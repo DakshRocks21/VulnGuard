@@ -51,7 +51,7 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     try:
         INSTALLATION_ID = get_installation_id(bot_key)
-        token = get_installation_access_token(bot_key)
+        token = get_installation_access_token(bot_key, INSTALLATION_ID)
         g = Github(token)
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)
@@ -87,12 +87,12 @@ def get_installation_id(bot_key):
     print("Installation ID:", response[0]["id"])
     return response[0]["id"]
 
-def get_installation_access_token(bot_key):
+def get_installation_access_token(bot_key, installation_id):
     """
     Exchange the JWT for an installation access token.
     """
     jwt_token = generate_jwt(bot_key)
-    url = f"https://api.github.com/app/installations/{INSTALLATION_ID}/access_tokens"
+    url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
     headers = {
         "Authorization": f"Bearer {jwt_token}",
         "Accept": "application/vnd.github+json",
