@@ -2,6 +2,6 @@ PyGithub
 requests
 openai
 python-dotenv
-langchain==0.1.20
+langchain==0.3.11
 tree-sitter
 tree-sitter-python
