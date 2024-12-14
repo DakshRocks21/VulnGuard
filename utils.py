@@ -46,7 +46,7 @@ def get_pr_details(repo_name, pr_number, github_token):
         exit(1)
     return title, body
 
-def  comment_on_pr_via_api(bot_key, repo, pr_number, comment):
+def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
@@ -57,15 +57,15 @@ def  comment_on_pr_via_api(bot_key, repo, pr_number, comment):
         token = get_installation_access_token(jwt_token, INSTALLATION_ID)
         
         
-        comment = json.loads(comment)["summary"]
+        summary = json.loads(comment)["summary"]
+        report = json.loads(comment)["report"]
         
         g = Github(token)
         repo = g.get_repo(repo)
         pr = repo.get_pull(pr_number)    
         
-        print(f"Commenting on PR #{pr_number} with: {comment}")
-        
-        pr.create_issue_comment(comment)
+        pr.create_issue_comment("#Summary: \n" + summary)
+        pr.create_issue_comment("#Report: \n" + report)
         
         if (comment.isprintable()):
             print(f"Commented on PR #{pr_number}")

@@ -66,6 +66,7 @@ Come up with a list of functions required to recreate a minimally viable test en
 IMPORTANT - DO NOT DEVIATE (Output format):
 {
 	"summary": "Markdown-formatted summary as documented above",
+    "report": "Detailed analysis of the code snippet, vulnerabilities, and recommendations. IN MARKDOWN FORMAT.",
 	"functions": "List of functions as documented above",
     "test_cases": "Summary of the test case(s) in mind, which will be written later",
 }   
