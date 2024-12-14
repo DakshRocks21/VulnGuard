@@ -56,7 +56,7 @@ if __name__ == "__main__":
     gpt = VulnGuardGPT()
     prompt = f"""Code Information:
 Description:
-{pr.body}
+{pr.get_comment(0)}
 
 Git diff (with files):
 {commit_diff}
