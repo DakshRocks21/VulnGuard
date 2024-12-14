@@ -13,7 +13,7 @@ def main():
     openai_key = os.getenv("OPENAI_API_KEY", "")
 
     # Validate required environment variables
-    if not all([base_sha, head_sha, github_token, repo_name, openai_key]):
+    if github_token == "" or openai_key == "":
         print("Error: Missing required environment variables.")
         exit(1)
 
