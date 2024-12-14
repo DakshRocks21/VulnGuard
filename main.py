@@ -7,11 +7,25 @@ def get_commit_diff(base_sha, head_sha):
     Get commit messages between two Git SHAs.
     """
     try:
-        result = subprocess.check_output(
-            ["git", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
-            text=True,
+        os.system("git config --global --add safe.directory /github/workspace")
+
+        # DEBUG
+        # result = subprocess.run(
+        #     [],
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE,
+        # )
+        # print(result.stderr)
+        # print(result.stdout)
+
+        result = subprocess.run(
+            ["git", "--no-pager", "diff", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-        return result.strip()
+        print(result.stderr)
+        print(result.stdout)
+        return result.stdout.decode().strip()
     except subprocess.CalledProcessError as e:
         print(f"Error getting commit diff: {e}")
         return ""
