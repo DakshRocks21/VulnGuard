@@ -92,15 +92,37 @@ def get_installation_access_token(jwt_token, installation_id):
 def get_installation_id(bot_key, repo_name):
     """
     Find the installation ID and user for the given repository name.
+    Supports pagination for installations.
+    
+    TODO: Add pagination support for repositories(done) and installations(tbc).
     """
-    # Fetch all installations of the app
+    # Generate the JWT for authentication
     jwt_token = generate_jwt(bot_key)
-    url = f"https://api.github.com/app/installations"
+    base_url = "https://api.github.com/app/installations"
     headers = {
         "Authorization": f"Bearer {jwt_token}",
         "Accept": "application/vnd.github+json",
     }
-    installations = requests.get(url, headers=headers).json()
+    
+    installations = []
+    url = base_url
+
+    # Fetch all installations using pagination
+    while url:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        installations.extend(response.json())
+
+        # Check for a 'next' link in the headers
+        if "Link" in response.headers:
+            links = response.headers["Link"].split(",")
+            next_link = None
+            for link in links:
+                if 'rel="next"' in link:
+                    next_link = link.split(";")[0].strip("<> ")
+            url = next_link
+        else:
+            url = None  # No more pages
 
     # Loop through installations and check repositories
     for installation in installations:
@@ -111,20 +133,28 @@ def get_installation_id(bot_key, repo_name):
         token = get_installation_access_token(jwt_token, installation_id)
         repo_url = "https://api.github.com/installation/repositories"
         repo_headers = {
-            "Authorization": f"Bearer {token}", 
+            "Authorization": f"Bearer {token}",
             "Accept": "application/vnd.github+json",
         }
-        repo_response = requests.get(repo_url, headers=repo_headers)
-        repo_response.raise_for_status()
-        repositories = repo_response.json()["repositories"]
 
-        # Check if the repository matches
-        for repo in repositories:
-            if repo["full_name"] == repo_name:
-                return {
-                    "installation_id": installation_id,
-                    "added_by": account_login,
-                    "repo_name": repo_name,
-                }
+        repo_page = 1
+        while True:
+            repo_response = requests.get(f"{repo_url}?page={repo_page}", headers=repo_headers)
+            repo_response.raise_for_status()
+            repositories = repo_response.json()["repositories"]
+            
+            if not repositories:
+                break  # No more repositories
+
+            # Check if the repository matches
+            for repo in repositories:
+                if repo["full_name"] == repo_name:
+                    return {
+                        "installation_id": installation_id,
+                        "added_by": account_login,
+                        "repo_name": repo_name,
+                    }
+            
+            repo_page += 1  # Move to the next page
 
     raise ValueError(f"Repository '{repo_name}' not found in any installation.")
