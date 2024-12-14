@@ -11,6 +11,7 @@ def get_commit_diff(base_sha, head_sha):
             ["git", "--no-pager", "log", f"{base_sha}..{head_sha}", "--pretty=format:%s"],
             shell=True,
             text=True,
+            stderr=subprocess.PIPE,
         )
         return result.strip()
     except subprocess.CalledProcessError as e:
