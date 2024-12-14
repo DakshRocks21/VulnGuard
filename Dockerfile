@@ -17,6 +17,8 @@ COPY requirements.txt /app/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir -r /app/requirements.txt
 
+RUN apt update -y && apt install -y git
+
 # Copy the source code into the container
 COPY . /app
 
