@@ -45,14 +45,16 @@ def get_pr_details(repo_name, pr_number, github_token):
         exit(1)
     return title, body
 
-def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
+def  comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
         INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
         print(1)
-        token = get_installation_access_token(bot_key, INSTALLATION_ID)
+        print(INSTALLATION_ID)
+        jwt_token = generate_jwt(bot_key)
+        token = get_installation_access_token(jwt_token, INSTALLATION_ID)
         print(2)
         
         g = Github(token)
