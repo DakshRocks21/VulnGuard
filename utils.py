@@ -45,7 +45,7 @@ def get_pr_details(repo_name, pr_number, github_token):
         exit(1)
     return title, body
 
-def comment_on_pr_via_api(bot_key, repo, pr_number, github_token, comment):
+def comment_on_pr_via_api(bot_key, repo, pr_number, comment):
     """
     Comment on a GitHub pull request using the GitHub API.
     """

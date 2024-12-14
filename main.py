@@ -20,7 +20,7 @@ def main():
     # Get the git diff
     commit_diff = get_commit_diff(base_sha, head_sha)
     
-    title, body = get_pr_details(repo_name, pr_number)
+    title, body = get_pr_details(repo_name, pr_number, github_token)
     # Construct GPT prompt
     prompt = f"""Code Information:
 PR Title:
@@ -38,9 +38,9 @@ Git diff (with files):
     
     # Comment on the pull request
     try:
-        comment_on_pr_via_api(bot_key, repo_name, pr_number, github_token, response["summary"])
+        comment_on_pr_via_api(bot_key, repo_name, pr_number, response["summary"])
     except Exception as e:
-        comment_on_pr_via_api(bot_key, repo_name, pr_number, github_token, response)
+        comment_on_pr_via_api(bot_key, repo_name, pr_number, response)
 
 if __name__ == "__main__":
     main()
