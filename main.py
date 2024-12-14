@@ -36,6 +36,8 @@ Git diff (with files):
     gpt = VulnGuardGPT(openai_key)
     response = gpt.get_response(prompt)
     
+    print(response)
+    
     # Comment on the pull request
     try:
         comment_on_pr_via_api(bot_key, repo_name, pr_number, response["summary"])
