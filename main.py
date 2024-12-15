@@ -1,7 +1,10 @@
+import json
 import os
+
 from utils import get_commit_diff, comment_on_pr_via_api, get_pr_details
 from gpt import VulnGuardGPT
 from parser import CodeParser
+from coderag import CodeRAG
 
 def main():
     # Retrieve environment variables
@@ -43,12 +46,22 @@ Git diff (with files):
 """
     
     gpt = VulnGuardGPT(openai_key)
-    response = gpt.get_response(prompt)
-    
-    #print(response)
+    response = json.loads(gpt.get_response(prompt))
+
+    functions = response['functions']
+    rag = CodeRAG()
+    rag_query = rag.query(functions)
+
+    rag_response = gpt.get_code_response(rag_query)
+    if type(rag_response) == tuple:
+        response['script'] = rag_response[0]
+        response['output'] = rag_response[1]
+    else:
+        response['script'] = "# No script created"
+        response['output'] = "No output generated"
     
     # Comment on the pull request
-    comment_on_pr_via_api(bot_key, repo_name, pr_number, response)
+    comment_on_pr_via_api(bot_key, repo_name, pr_number, json.dumps(response))
 
 if __name__ == "__main__":
     main()
