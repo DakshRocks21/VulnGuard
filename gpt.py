@@ -336,6 +336,7 @@ The Code above uses these code snippets :
 
         while (attempt < max_tries):
             response = json.loads(self.get_response(prompt))['code']  # TODO: Implement error handling
+            print(response)
             
             result = subprocess.run(
                 ["python", "-c", response],
