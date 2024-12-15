@@ -48,6 +48,10 @@ Git diff (with files):
     gpt = VulnGuardGPT(openai_key)
     response = json.loads(gpt.get_response(prompt))
 
+    # Comment on the pull request
+    comment_on_pr_via_api(bot_key, repo_name, pr_number, json.dumps(response))
+
+    # Generate test cases
     functions = response['functions']
     rag = CodeRAG()
     rag_query = rag.query(functions)
@@ -60,8 +64,7 @@ Git diff (with files):
         response['script'] = "# No script created"
         response['output'] = "No output generated"
     
-    # Comment on the pull request
-    comment_on_pr_via_api(bot_key, repo_name, pr_number, json.dumps(response))
+    comment_on_pr_via_api(bot_key, repo_name, pr_number, json.dumps(response), is_script=True)
 
 if __name__ == "__main__":
     main()

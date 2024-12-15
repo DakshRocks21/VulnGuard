@@ -330,11 +330,13 @@ Write test cases based on the code. Output your response in JSON format like the
 {{"code": "import sys\nsys.exit(0)"}}
 
 The test case should recreate the environment from scratch, assuming that nothing is present.
+External module imports should be excluded if possible. If not, import the os module as execute
+a pip install command to install the module.
 
 The Code above uses these code snippets :
 {rag_inputs}"""
 
-        while (attempt < max_tries):
+        for _ in range(max_tries):
             response = json.loads(self.get_response(prompt))['code']  # TODO: Implement error handling
             print(response)
             
