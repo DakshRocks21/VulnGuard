@@ -63,15 +63,17 @@ If vulnerabilities are found: provide a report of the code functionality, the de
 You are also given the pull request title and body, which usually contains context about the changes made.
 A list of functions present in the codebase is also provided.
 Based on the information provided above, come up with possible test cases/benchmarks to prove that the changes made match the title and body.
-Come up with a list of functions required to recreate a minimally viable test environment for the test cases.
+The test cases should have visible and informative output that suggest the alignment of the changes with the commit message in STDOUT.
+Come up with a concise list of key functions required to recreate a minimally viable test environment for the test cases.
 
+DO NOT BE OVERLY VERBOSE.
 VERY VERY IMPORTANT!!! USE MARKDOWN, BULLET POINTS, AND BACKTICKS FOR CODE. 
 
 IMPORTANT - DO NOT DEVIATE (Output format):
 {
 	"summary": "Markdown-formatted summary as documented above  IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
     "report": "Detailed analysis of the code snippet, vulnerabilities, and recommendations. IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
-	"functions": "List of functions as documented above",
+	"functions": "Pythonic list of functions as documented above",
     "test_cases": "Summary of the test case(s) in mind, which will be written later",
 }   
 
@@ -324,23 +326,25 @@ OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS AROUND IT. YOU ARE ONLY ALLOWED T
         attempt = 0
         
         prompt = f"""Task Information:
-        Write test cases based on the code. From now on, return your results only in python. Without backticks.
-        ALL CODE MUST BE WRITTEN IN PYTHON, include installion of any required libraries.
-        
-        The Code above uses these code snippets :
-        {rag_inputs}
-        """
+Write test cases based on the code. Output your response in JSON format like the following:
+{{"code": "import sys\nsys.exit(0)"}}
+
+The test case should recreate the environment from scratch, assuming that nothing is present.
+
+The Code above uses these code snippets :
+{rag_inputs}"""
+
         while (attempt < max_tries):
-            response = self.get_response(prompt)
+            response = json.loads(self.get_response(prompt))  # TODO: Implement error handling
             
             result = subprocess.run(
-                ["python3", "-c", response],
+                ["python", "-c", response],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
             
             if not result.stderr:
-                return (response,result.stdout.decode())        
+                return (response, result.stdout.decode())        
             
             prompt = f"""An error occurred while running the code. Please try again.
             {result.stderr.decode()}

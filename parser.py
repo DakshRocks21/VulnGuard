@@ -11,6 +11,8 @@ class CodeParser:
     def get_python_files(self, directory):
         python_files = []
         for root, _, files in os.walk(directory):
+            if 'venv' in root.split(os.sep):
+                continue
             for file in files:
                 if file.endswith('.py'):
                     python_files.append(os.path.join(root, file))

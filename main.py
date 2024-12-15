@@ -1,6 +1,7 @@
 import os
 from utils import get_commit_diff, comment_on_pr_via_api, get_pr_details
 from gpt import VulnGuardGPT
+from parser import CodeParser
 
 def main():
     # Retrieve environment variables
@@ -21,6 +22,11 @@ def main():
     commit_diff = get_commit_diff(base_sha, head_sha)
     
     title, body = get_pr_details(repo_name, pr_number, github_token)
+
+    # Extract all the symbols
+    parser = CodeParser()
+    symbols = '\n'.join(parser.parse())
+
     # Construct GPT prompt
     prompt = f"""Code Information:
 PR Title:
@@ -28,6 +34,9 @@ PR Title:
 
 PR Body:
 {body}
+
+Function List:
+{symbols}
 
 Git diff (with files):
 {commit_diff}

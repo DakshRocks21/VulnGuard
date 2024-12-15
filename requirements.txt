@@ -3,5 +3,8 @@ requests
 openai
 python-dotenv
 langchain==0.1.20
+langchain_chroma
+langchain_openai
 tree-sitter
 tree-sitter-python
+sentence_transformers==2.3.0
