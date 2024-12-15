@@ -51,36 +51,36 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment, is_script=False):
     Comment on a GitHub pull request using the GitHub API.
     """
     try:
-        # INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
+        INSTALLATION_ID = get_installation_id(bot_key, repo)["installation_id"]
         
-        # jwt_token = generate_jwt(bot_key)
-        # token = get_installation_access_token(jwt_token, INSTALLATION_ID)
+        jwt_token = generate_jwt(bot_key)
+        token = get_installation_access_token(jwt_token, INSTALLATION_ID)
         
         print(f"Commenting on PR #{pr_number}...")
         print(f"Comment: {comment}")
         
-        # try: 
-        #     summary = json.loads(comment)["summary"]
-        #     report = json.loads(comment)["report"]
-        #     script = json.loads(comment)["script"]
-        #     output = json.loads(comment)["output"]
-        #     
-        #     g = Github(token)
-        #     repo = g.get_repo(repo)
-        #     pr = repo.get_pull(pr_number)    
-        #     
-        #     pr.create_issue_comment("# Summary \n" + summary)
-        #     pr.create_issue_comment("# Report \n" + report)
-        #     pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "``` \nOutput: \n```\n" + output + "\n```\n")
-        #     
-        #     if (comment.isprintable()):
-        #         print(f"Commented on PR #{pr_number}")
-        # except:
-        #     g = Github(token)
-        #     repo = g.get_repo(repo)
-        #     pr = repo.get_pull(pr_number)
-        #     pr.create_issue_comment(comment)
-        #     exit(1) # Unintended error
+        try: 
+            summary = json.loads(comment)["summary"]
+            report = json.loads(comment)["report"]
+            script = json.loads(comment)["script"]
+            output = json.loads(comment)["output"]
+            
+            g = Github(token)
+            repo = g.get_repo(repo)
+            pr = repo.get_pull(pr_number)    
+            
+            pr.create_issue_comment("# Summary \n" + summary)
+            pr.create_issue_comment("# Report \n" + report)
+            pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "``` \nOutput: \n```\n" + output + "\n```\n")
+            
+            if (comment.isprintable()):
+                print(f"Commented on PR #{pr_number}")
+        except:
+            g = Github(token)
+            repo = g.get_repo(repo)
+            pr = repo.get_pull(pr_number)
+            pr.create_issue_comment(comment)
+            exit(1) # Unintended error
             
         
         print(f"Commented on PR #{pr_number}")
