@@ -2,6 +2,7 @@ import openai
 import os
 import subprocess
 import json
+import signal
 
 
 class ChatGPT:
@@ -339,15 +340,13 @@ The Code above uses these code snippets :
             response = json.loads(self.get_response(prompt))['code']  # TODO: Implement error handling
             print(response)
             
-            try:
-                result = subprocess.run(
-                    ["python", "-c", response],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    timeout=60
-                )
-            except subprocess.TimeoutExpired:
-                return (response, result.stdout.decode())        
+            result = subprocess.run(
+                ["python", "-c", response],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                preexec_fn=signal.alarm(60)  # SIGALARM after 60 seconds
+            )
+
             
             if not result.stderr:
                 return (response, result.stdout.decode())        
