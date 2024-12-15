@@ -330,8 +330,7 @@ Write test cases based on the code. Output your response in JSON format like the
 {{"code": "import sys\nsys.exit(0)"}}
 
 The test case should recreate the environment from scratch, assuming that nothing is present.
-External module imports should be excluded if possible. If not, import the os module as execute
-a pip install command to install the module.
+External module imports should be excluded if possible. If not, import the os module as execute a pip install command to install the module. Ensure that the code does not end up in a loop (such as infinite while loops or starting persistent processes). In the event that infinite loops are required, the code generated will be terminated after 60 seconds.
 
 The Code above uses these code snippets :
 {rag_inputs}"""
@@ -344,6 +343,7 @@ The Code above uses these code snippets :
                 ["python", "-c", response],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                timeout=60
             )
             
             if not result.stderr:
