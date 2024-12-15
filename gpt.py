@@ -335,7 +335,7 @@ The Code above uses these code snippets :
 {rag_inputs}"""
 
         while (attempt < max_tries):
-            response = json.loads(self.get_response(prompt))  # TODO: Implement error handling
+            response = self.get_response(prompt)  # TODO: Implement error handling
             
             result = subprocess.run(
                 ["python", "-c", response],
