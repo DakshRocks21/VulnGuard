@@ -75,7 +75,7 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment, is_script=False):
                 pr.create_issue_comment("# Summary \n" + summary)
                 pr.create_issue_comment("# Report \n" + report)
             else:
-                pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "``` \nOutput: \n```\n" + output + "\n```\n")
+                pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "\n``` \nOutput: \n```\n" + output + "\n```\n")
             
             if (comment.isprintable()):
                 print(f"Commented on PR #{pr_number}")
