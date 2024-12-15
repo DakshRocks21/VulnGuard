@@ -8,6 +8,24 @@ As GitHub gets increasingly utilised by developers, there is a growing probabili
 ## Features
 
 - Vulnerability Analysis
-  - Generates an analysis report of new commitments to a repository in about 1 minute.
+  - Generates an analysis report of new commitments to a repository in less than 10 minutes.
 - Automated Test Case Generation
   - Automatically generates test cases to prove that suggested changes work as intended.
+
+## QNA
+
+**Q: How does it work/help?**
+
+A:
+
+**Q: What makes us special?**
+
+A:
+
+**Q: Costs?**
+
+A:
+
+**Q: Limitations?**
+
+A: 
