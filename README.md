@@ -20,7 +20,7 @@ A: Open source developers.
 
 **Q: How does it work/help?**
 
-A: It reviews pull requests by flagging out potential vulnerabilities by checking if the new code added alighs with it's said description. It also automatically generating test cases through finding the dependency functions. This reduces the workload on open source developers as it simplifies their code reviewing process. 
+A: It reviews pull requests by flagging out potential vulnerabilities by checking if the new code added aligns with it's said description. It also automatically generates test cases through finding the dependency functions. This reduces the workload on open source developers as it simplifies their code reviewing process. 
 
 **Q: What makes us special?**
 
