@@ -60,18 +60,22 @@ def comment_on_pr_via_api(bot_key, repo, pr_number, comment, is_script=False):
         print(f"Comment: {comment}")
         
         try: 
-            summary = json.loads(comment)["summary"]
-            report = json.loads(comment)["report"]
-            script = json.loads(comment)["script"]
-            output = json.loads(comment)["output"]
+            if not is_script:
+                summary = json.loads(comment)["summary"]
+                report = json.loads(comment)["report"]
+            else:
+                script = json.loads(comment)["script"]
+                output = json.loads(comment)["output"]
             
             g = Github(token)
             repo = g.get_repo(repo)
             pr = repo.get_pull(pr_number)    
             
-            pr.create_issue_comment("# Summary \n" + summary)
-            pr.create_issue_comment("# Report \n" + report)
-            pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "``` \nOutput: \n```\n" + output + "\n```\n")
+            if not is_script:
+                pr.create_issue_comment("# Summary \n" + summary)
+                pr.create_issue_comment("# Report \n" + report)
+            else:
+                pr.create_issue_comment("# Script \nI have also generated the following test script: \n```py\n" + script + "``` \nOutput: \n```\n" + output + "\n```\n")
             
             if (comment.isprintable()):
                 print(f"Commented on PR #{pr_number}")
