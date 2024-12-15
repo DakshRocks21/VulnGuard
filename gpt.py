@@ -339,12 +339,15 @@ The Code above uses these code snippets :
             response = json.loads(self.get_response(prompt))['code']  # TODO: Implement error handling
             print(response)
             
-            result = subprocess.run(
-                ["python", "-c", response],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                timeout=60
-            )
+            try:
+                result = subprocess.run(
+                    ["python", "-c", response],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=60
+                )
+            except subprocess.TimeoutExpired:
+                return (response, result.stdout.decode())        
             
             if not result.stderr:
                 return (response, result.stdout.decode())        
