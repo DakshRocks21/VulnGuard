@@ -2,10 +2,11 @@ import openai
 import os
 import subprocess
 import json
+import signal
 
 
 class ChatGPT:
-    def __init__(self, api_key, model="gpt-4o"):
+    def __init__(self, api_key, model="gpt-4o-mini"):
         """
         Initialize the ChatGPT instance with an API key and model.
         """
@@ -63,15 +64,17 @@ If vulnerabilities are found: provide a report of the code functionality, the de
 You are also given the pull request title and body, which usually contains context about the changes made.
 A list of functions present in the codebase is also provided.
 Based on the information provided above, come up with possible test cases/benchmarks to prove that the changes made match the title and body.
-Come up with a list of functions required to recreate a minimally viable test environment for the test cases.
+The test cases should have visible and informative output that suggest the alignment of the changes with the commit message in STDOUT.
+Come up with a concise list of key functions required to recreate a minimally viable test environment for the test cases.
 
+DO NOT BE OVERLY VERBOSE.
 VERY VERY IMPORTANT!!! USE MARKDOWN, BULLET POINTS, AND BACKTICKS FOR CODE. 
 
 IMPORTANT - DO NOT DEVIATE (Output format):
 {
 	"summary": "Markdown-formatted summary as documented above  IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
     "report": "Detailed analysis of the code snippet, vulnerabilities, and recommendations. IN MARKDOWN FORMAT. SHOW FUNCTIONS WHICH ARE VULNERABLE. USE BULLET POINTS. USE BACKTICKS FOR CODE.",
-	"functions": "List of functions as documented above",
+	"functions": "Pythonic list of functions as documented above",
     "test_cases": "Summary of the test case(s) in mind, which will be written later",
 }   
 
@@ -324,23 +327,29 @@ OUTPUT SHOULD IN JSON FORMAT WITH NO BACKTICKS AROUND IT. YOU ARE ONLY ALLOWED T
         attempt = 0
         
         prompt = f"""Task Information:
-        Write test cases based on the code. From now on, return your results only in python. Without backticks.
-        ALL CODE MUST BE WRITTEN IN PYTHON, include installion of any required libraries.
-        
-        The Code above uses these code snippets :
-        {rag_inputs}
-        """
-        while (attempt < max_tries):
-            response = self.get_response(prompt)
+Write test cases based on the code. Output your response in JSON format like the following:
+{{"code": "import sys\nsys.exit(0)"}}
+
+The test case should recreate the environment from scratch, assuming that nothing is present.
+External module imports should be excluded if possible. If not, import the os module as execute a pip install command to install the module. Ensure that the code does not end up in a loop (such as infinite while loops or starting persistent processes). In the event that infinite loops are required, the code generated will be terminated after 60 seconds.
+
+The Code above uses these code snippets :
+{rag_inputs}"""
+
+        for _ in range(max_tries):
+            response = json.loads(self.get_response(prompt))['code']  # TODO: Implement error handling
+            print(response)
             
             result = subprocess.run(
-                ["python3", "-c", response],
+                ["python", "-c", response],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                preexec_fn=lambda: signal.alarm(60)  # SIGALARM after 60 seconds
             )
+
             
             if not result.stderr:
-                return (response,result.stdout.decode())        
+                return (response, result.stdout.decode())        
             
             prompt = f"""An error occurred while running the code. Please try again.
             {result.stderr.decode()}
