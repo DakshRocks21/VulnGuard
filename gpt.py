@@ -344,7 +344,7 @@ The Code above uses these code snippets :
                 ["python", "-c", response],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                preexec_fn=signal.alarm(60)  # SIGALARM after 60 seconds
+                preexec_fn=lambda: signal.alarm(60)  # SIGALARM after 60 seconds
             )
 
             
