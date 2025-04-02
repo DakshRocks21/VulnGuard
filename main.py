@@ -11,7 +11,7 @@ def main():
     # Retrieve environment variables
     base_sha = os.getenv("BASE_SHA", "")
     head_sha = os.getenv("HEAD_SHA", "")
-    github_token = os.getenv("GITHUB_TOKEN", "")
+    github_token = os.getenv("APP_ID", "")
     pr_number = int(os.getenv("PR_NUMBER", 0))
     repo_name = os.getenv("GITHUB_REPOSITORY", "")
     openai_key = os.getenv("OPENAI_API_KEY", "")
